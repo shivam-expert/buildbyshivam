@@ -1,0 +1,228 @@
+.scroller {
+  --mask-bg: #0a0a0b;
+  --mask-ink: #ede6da;
+  --ink: #f3eee6;
+  --ink-soft: rgba(243, 238, 230, 0.66);
+  --accent: #d9bf94;
+  --cyan: #bfa782;
+  --page: #050506;
+  --mono: var(--font-jetbrains-mono), ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+
+  position: relative;
+  height: 420vh;
+  width: 100%;
+  background: var(--page);
+  color: var(--ink);
+  font-family: var(--font-archivo), "Helvetica Neue", Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+.stage {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  height: 100svh;
+  overflow: hidden;
+}
+
+.art,
+.mask,
+.scrim,
+.hero {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.art,
+.mask {
+  display: block;
+}
+
+.art {
+  transform-origin: 50% 50%;
+}
+
+.scrim {
+  background: linear-gradient(180deg, rgba(5, 5, 6, 0) 40%, rgba(5, 5, 6, 0.72) 100%);
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* ---------- chrome ---------- */
+.chrome {
+  position: absolute;
+  left: 0;
+  right: 0;
+  padding: clamp(16px, 2.4vw, 28px);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  color: var(--mask-ink);
+  font-family: var(--mono);
+  font-size: 12px;
+  letter-spacing: 0.02em;
+  pointer-events: none;
+}
+.top {
+  top: 0;
+}
+.bottom {
+  bottom: 0;
+}
+.wordmark {
+  font-weight: 600;
+  font-size: 14px;
+}
+.caret {
+  display: inline-block;
+  width: 0.6em;
+  height: 1.05em;
+  background: currentColor;
+  vertical-align: -0.18em;
+  margin-left: 2px;
+  animation: blink 1s steps(1) infinite;
+}
+@keyframes blink {
+  50% {
+    opacity: 0;
+  }
+}
+.status {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.status i {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--mask-ink);
+  box-shadow: 0 0 0 3px rgba(237, 230, 218, 0.15);
+}
+.hint {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.hint svg {
+  width: 12px;
+  height: 12px;
+  animation: nudge 1.8s ease-in-out infinite;
+}
+@keyframes nudge {
+  50% {
+    transform: translateY(3px);
+  }
+}
+
+/* ---------- final section ---------- */
+.hero {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: clamp(20px, 4vw, 56px);
+  padding-bottom: clamp(28px, 6vw, 72px);
+  pointer-events: none;
+}
+.live {
+  pointer-events: auto;
+}
+.r {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.6s cubic-bezier(0.2, 0.7, 0.2, 1), transform 0.8s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+.live .r {
+  opacity: 1;
+  transform: none;
+  transition-delay: var(--d);
+}
+.kicker {
+  font-family: var(--mono);
+  font-size: 13px;
+  color: var(--cyan);
+  margin-bottom: 14px;
+}
+.title {
+  margin: 0;
+  font-weight: 900;
+  font-stretch: 125%;
+  font-size: clamp(38px, 9vw, 150px);
+  line-height: 0.9;
+  letter-spacing: -0.035em;
+  overflow-wrap: anywhere;
+  text-shadow: 0 2px 40px rgba(0, 0, 0, 0.35);
+}
+.accent {
+  color: var(--accent);
+  font-style: italic;
+  font-weight: 300;
+  letter-spacing: -0.02em;
+}
+.lead {
+  margin: clamp(14px, 1.6vw, 22px) 0 0;
+  max-width: 46ch;
+  font-size: clamp(15px, 1.2vw, 18px);
+  line-height: 1.55;
+  color: var(--ink-soft);
+}
+.actions {
+  margin-top: clamp(20px, 2.2vw, 30px);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.btn {
+  font-family: inherit;
+  font-size: 15px;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  padding: 14px 24px;
+  border-radius: 999px;
+  text-decoration: none;
+  display: inline-block;
+  transition: transform 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
+}
+.primary {
+  background: var(--ink);
+  color: #0a0a0b;
+}
+.primary:hover {
+  background: var(--accent);
+}
+.ghost {
+  color: var(--ink);
+  box-shadow: inset 0 0 0 1.5px rgba(243, 238, 230, 0.35);
+  backdrop-filter: blur(6px);
+}
+.ghost:hover {
+  background: rgba(243, 238, 230, 0.07);
+}
+.btn:hover {
+  transform: translateY(-2px);
+}
+.btn:focus-visible {
+  outline: 3px solid var(--cyan);
+  outline-offset: 3px;
+}
+
+@media (max-width: 700px) {
+  .status,
+  .ver {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .r,
+  .btn {
+    transition: none;
+  }
+  .hint svg,
+  .caret {
+    animation: none;
+  }
+}
