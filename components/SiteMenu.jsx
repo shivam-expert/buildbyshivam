@@ -5,7 +5,8 @@ import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
 const PAGES = [
-  { href: "/", label: "Home", note: "Silk scroll hero" },
+  { href: "/", label: "Home", note: "Build by Shivam landing page" },
+  { href: "/hero", label: "Silk Hero", note: "Scroll-to-compile PORTFOLIO hero" },
   { href: "/bag-swap", label: "Bag Swap", note: "Tap a bag, watch it swap" },
   { href: "/clog", label: "Clog Story", note: "Scroll-driven product story" },
   { href: "/film-archive", label: "Film Archive", note: "3D shelf of VHS tapes" },
