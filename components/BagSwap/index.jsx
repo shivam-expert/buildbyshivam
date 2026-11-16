@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import styles from "./BagSwap.module.css";
+import styles from "./BagSwap.module.css"; // imperatively toggled classes only
 import { createLightning } from "./lightning";
 import { INITIAL_PRODUCT, MODEL_H, MODEL_W, PRODUCTS, src } from "./products";
 
@@ -21,6 +21,7 @@ const inOutCubic = (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3)
 const lerp = (a, b, k) => a + (b - a) * k;
 const pct = (v, of) => `${(v / of) * 100}%`;
 const pad = (n) => String(n).padStart(2, "0");
+const cx = (...c) => c.filter(Boolean).join(" ");
 
 /** Box the bag occupies, in model pixels. */
 function boxFor(p) {
@@ -149,6 +150,9 @@ export default function BagSwap({ className = "" }) {
           z = k > 0.5 ? b.z : a.z;
         }
         const c = cards[i];
+        // React clears callback refs to null when the page unmounts (e.g. navigating
+        // away via the site menu), which can land before this loop is cancelled.
+        if (!c) continue;
         c.style.transform = `translate3d(${x - cw / 2}px,${y - cw * 0.62}px,0) scale(${s})`;
         c.style.opacity = o.toFixed(3);
         c.style.zIndex = z;
@@ -258,7 +262,7 @@ export default function BagSwap({ className = "" }) {
       let best = null;
       let bd = Infinity;
       cards.forEach((c, j) => {
-        if (j % P !== i) return;
+        if (!c || j % P !== i) return;
         const r = c.getBoundingClientRect();
         const d = Math.abs(r.left + r.width / 2 - W / 2);
         if (d < bd) {
@@ -309,37 +313,63 @@ export default function BagSwap({ className = "" }) {
   }
 
   const p = PRODUCTS[shown];
-  const rootClass = [styles.root, phase !== "loading" && styles.done, phase === "ready" && styles.ready, className]
-    .filter(Boolean)
-    .join(" ");
+  const done = phase !== "loading";
+  const ready = phase === "ready";
+  const roll = cx("[transition:opacity_.25s_ease,translate_.35s_cubic-bezier(.16,1,.3,1)]", rolling && "translate-y-2 opacity-0");
 
   return (
-    <div ref={rootRef} className={rootClass}>
-      <div ref={brandRef} className={styles.brand}>
+    <div
+      ref={rootRef}
+      className={cx(
+        "fixed inset-0 overflow-hidden bg-[#f2f2ef] font-bag-body text-[#121212] antialiased [color-scheme:light] [&_img]:select-none [&_img]:[-webkit-user-drag:none]",
+        className,
+      )}
+    >
+      <div
+        ref={brandRef}
+        className={cx(
+          "fixed left-[clamp(20px,3vw,44px)] top-[clamp(16px,2.6vw,34px)] z-[8] origin-top-left font-bag-display text-[clamp(56px,7.2vw,104px)] leading-[.9] tracking-[-.025em] transition-transform duration-[1.1s] ease-[cubic-bezier(.76,0,.24,1)]",
+          done && "scale-(--brandScale)",
+        )}
+      >
         Shivam.
       </div>
 
-      <nav className={styles.nav}>
+      <nav
+        className={cx(
+          "fixed inset-x-0 top-0 z-[7] flex h-[clamp(52px,6vw,70px)] items-center justify-center gap-[clamp(14px,2vw,28px)] text-[9px] uppercase tracking-[.14em] [transition:opacity_.7s_ease_.5s,translate_.9s_cubic-bezier(.16,1,.3,1)_.5s]",
+          !done && "-translate-y-2 opacity-0",
+        )}
+      >
         {NAV.map((label, i) => (
-          <a key={label} href="#" className={i === 0 ? styles.on : undefined}>
+          <a key={label} href="#" className={cx("hidden md:inline", i === 0 ? "text-[#5b6cff]" : "text-[#121212]")}>
             {label}
           </a>
         ))}
-        <span className={styles.bag}>
-          Bag <b ref={bagCountRef}>{count}</b>
+        <span className="absolute right-[clamp(20px,3vw,44px)] flex items-center gap-1.5">
+          Bag{" "}
+          <b ref={bagCountRef} className="inline-block rounded-[2px] bg-[#121212] px-[5px] py-0.5 font-normal text-white">
+            {count}
+          </b>
         </span>
       </nav>
 
-      <h1 className={styles.headline}>
-        <span className={styles.line}>
-          <i>Carried well.</i>
-        </span>
-        <span className={styles.line}>
-          <i>Every day.</i>
-        </span>
+      <h1 className="pointer-events-none fixed inset-x-0 top-[clamp(78px,12vh,124px)] z-[1] text-center font-bag-display text-[clamp(54px,9vw,132px)] font-normal leading-[.88] tracking-[-.035em]">
+        {["Carried well.", "Every day."].map((line, i) => (
+          <span key={line} className="block overflow-hidden pb-[.06em]">
+            <i
+              className={cx(
+                "inline-block not-italic transition-transform duration-[1.2s] ease-[cubic-bezier(.16,1,.3,1)]",
+                done ? (i === 0 ? "delay-[.55s]" : "delay-[.68s]") : "translate-y-[105%]",
+              )}
+            >
+              {line}
+            </i>
+          </span>
+        ))}
       </h1>
 
-      <div className={styles.stage}>
+      <div className="fixed inset-0 z-[2]">
         {Array.from({ length: N }, (_, i) => {
           const item = PRODUCTS[i % P];
           return (
@@ -348,74 +378,127 @@ export default function BagSwap({ className = "" }) {
               ref={(el) => {
                 cardRefs.current[i] = el;
               }}
-              className={`${styles.card} ${i % P === shown ? styles.active : ""}`}
+              className={cx(
+                "group absolute left-0 top-0 h-[calc(var(--cw)*1.24)] w-(--cw) opacity-0 will-change-[transform,opacity]",
+                ready && "cursor-pointer",
+              )}
               onClick={(e) => selectRef.current?.(i % P, e.currentTarget)}
             >
-              <div className={styles.cardInner}>
+              <div
+                className={cx(
+                  "flex size-full flex-col items-center justify-center gap-[calc(var(--cw)*.06)] rounded-[3px] bg-white px-[calc(var(--cw)*.1)] pb-[calc(var(--cw)*.08)] pt-[calc(var(--cw)*.12)] shadow-[0_1px_0_rgba(0,0,0,.03),0_10px_26px_-14px_rgba(0,0,0,.18)] outline outline-transparent [transition:translate_.45s_cubic-bezier(.16,1,.3,1),outline-color_.3s,box-shadow_.45s]",
+                  ready && "group-hover:-translate-y-1.5 group-hover:shadow-[0_1px_0_rgba(0,0,0,.03),0_18px_30px_-16px_rgba(0,0,0,.28)]",
+                  i % P === shown && "outline-[#5b6cff]",
+                )}
+              >
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={src(item.img)} alt={item.name} />
-                <span>{item.cat}</span>
+                <img src={src(item.img)} alt={item.name} className="min-h-0 w-full flex-1 object-contain" />
+                <span className="whitespace-nowrap text-[length:max(7px,calc(var(--cw)*.075))] tracking-[.02em] text-[#3a3a3a]">
+                  {item.cat}
+                </span>
               </div>
             </div>
           );
         })}
       </div>
 
-      <div ref={modelRef} className={styles.model}>
-        <div className={styles.shadow} />
+      <div
+        ref={modelRef}
+        className={cx(
+          "pointer-events-none fixed left-1/2 top-[17vh] z-[3] aspect-[476/1495] h-[92vh] -translate-x-1/2 [transition:opacity_1s_ease_.9s,translate_1.4s_cubic-bezier(.16,1,.3,1)_.9s]",
+          done ? "translate-y-0 opacity-100" : "translate-y-10 opacity-0",
+        )}
+      >
+        <div className="absolute -inset-x-[20%] -bottom-[2%] -z-1 h-[6%] bg-[radial-gradient(closest-side,rgba(0,0,0,.12),transparent)]" />
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={src("model")} alt="Model" className={styles.modelImg} />
+        <img src={src("model")} alt="Model" className="absolute inset-0 size-full" />
         <div ref={bagLayerRef} />
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img ref={handLRef} className={styles.hand} src={src("hand-l")} alt="" />
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img ref={handRRef} className={styles.hand} src={src("hand-r")} alt="" />
-        <div ref={flashRef} className={styles.flash} />
+        <div
+          ref={flashRef}
+          className="pointer-events-none absolute rounded-full opacity-0 bg-[radial-gradient(closest-side,#fff,rgba(201,210,255,.85)_35%,rgba(143,160,255,0))]"
+        />
       </div>
 
-      <canvas ref={zapRef} className={styles.zap} />
+      <canvas ref={zapRef} className="pointer-events-none fixed inset-0 z-[6]" />
 
-      <div className={`${styles.info} ${rolling ? styles.rolling : ""}`}>
-        <div className={`${styles.meta} ${styles.roll}`}>
+      <div
+        className={cx(
+          "fixed bottom-[84px] md:bottom-[clamp(20px,4vh,40px)] left-[clamp(20px,3vw,44px)] z-[7] w-[calc(100vw-40px)] md:w-[min(300px,40vw)] [transition:opacity_.7s_ease_1.2s,translate_1s_cubic-bezier(.16,1,.3,1)_1.2s]",
+          !done && "translate-y-5 opacity-0",
+        )}
+      >
+        <div className={cx("mb-2.5 flex gap-3 text-[9px] uppercase tracking-[.14em]", roll)}>
           <span>
             {pad(shown + 1)} / {pad(P)}
           </span>
-          <span className={styles.cat}>{p.cat}</span>
+          <span className="text-[#5b6cff]">{p.cat}</span>
         </div>
-        <h2 className={styles.roll}>{p.name}</h2>
-        <p className={styles.roll}>{p.desc}</p>
-        <div className={`${styles.price} ${styles.roll}`}>
-          <b>₹{p.price}</b>
-          <span>{p.colour}</span>
+        <h2 className={cx("mb-2.5 font-bag-display text-[clamp(34px,3.6vw,50px)] font-normal leading-[.95] tracking-[-.02em]", roll)}>
+          {p.name}
+        </h2>
+        <p className={cx("mb-3 min-h-[3.1em] text-[11px] leading-[1.55] text-[#4a4a47]", roll)}>{p.desc}</p>
+        <div className={cx("mb-3.5 flex items-baseline gap-3", roll)}>
+          <b className="text-base font-medium">₹{p.price}</b>
+          <span className="text-[9px] uppercase tracking-[.14em] text-[#8d8d88]">{p.colour}</span>
         </div>
-        <div className={styles.ctas}>
-          <button type="button" className={styles.add} onClick={addToBag}>
+        <div className="flex gap-2">
+          <button
+            type="button"
+            className="flex-1 cursor-pointer rounded border border-[#121212] bg-[#121212] px-3.5 py-[11px] text-[11px] text-white hover:-translate-y-px"
+            onClick={addToBag}
+          >
             Add to bag
           </button>
-          <button type="button" onClick={() => stepRef.current?.(1, false)}>
+          <button
+            type="button"
+            className="cursor-pointer rounded border border-black/10 bg-white px-3.5 py-[11px] text-[11px] text-[#121212] hover:-translate-y-px"
+            onClick={() => stepRef.current?.(1, false)}
+          >
             Next →
           </button>
         </div>
       </div>
 
-      <div ref={wearingRef} className={styles.wearing}>
-        <small>Now wearing</small>
+      <div
+        ref={wearingRef}
+        className={cx(
+          "fixed right-[clamp(20px,3vw,44px)] top-[clamp(140px,26vh,220px)] z-[7] hidden w-[clamp(130px,11vw,160px)] rounded-md bg-white p-2.5 shadow-[0_14px_30px_-18px_rgba(40,50,140,.35)] outline-[length:1.5px] outline-solid outline-[color-mix(in_srgb,#5b6cff_45%,transparent)] md:block [transition:opacity_.7s_ease_1.35s,translate_1s_cubic-bezier(.16,1,.3,1)_1.35s]",
+          !done && "translate-x-5 opacity-0",
+        )}
+      >
+        <small className="text-[8px] uppercase tracking-[.16em] text-[#5b6cff]">Now wearing</small>
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={src(p.img)} alt="" />
-        <div className={styles.wearingRow}>
-          <em>{p.name}</em>
-          <span>₹{p.price}</span>
+        <img src={src(p.img)} alt="" className="my-1.5 aspect-square w-full object-contain p-1.5 transition-opacity duration-[250ms]" />
+        <div className="flex items-baseline justify-between gap-1.5">
+          <em className="font-bag-display text-base not-italic">{p.name}</em>
+          <span className="text-[9px]">₹{p.price}</span>
         </div>
       </div>
-      <div className={styles.hint}>Tap any bag, or use ← → to restyle the same look.</div>
+      <div
+        className={cx(
+          "fixed right-[clamp(20px,3vw,44px)] top-[clamp(70px,10vh,96px)] z-[7] hidden w-[140px] text-right text-[8px] uppercase leading-[1.7] tracking-[.14em] text-[#8d8d88] transition-opacity delay-[1.5s] duration-700 md:block",
+          !done && "opacity-0",
+        )}
+      >
+        Tap any bag, or use ← → to restyle the same look.
+      </div>
 
-      <div className={styles.counter}>
-        <small>Curating the edit</small>
-        <div className={styles.counterRow}>
-          <span ref={numRef} className={styles.num}>
+      <div
+        className={cx(
+          "fixed bottom-[clamp(22px,5.5vw,70px)] right-[clamp(20px,4.4vw,64px)] z-[8] text-right [transition:opacity_.6s_ease,translate_.9s_cubic-bezier(.76,0,.24,1)]",
+          done && "pointer-events-none translate-y-[30px] opacity-0",
+        )}
+      >
+        <small className="mb-3 block text-[9px] uppercase tracking-[.2em] text-[#8d8d88]">Curating the edit</small>
+        <div className="flex items-end justify-end">
+          <span ref={numRef} className="text-[clamp(64px,9.4vw,128px)] font-medium leading-[.8] tracking-[-.05em] tabular-nums">
             0
           </span>
-          <span className={styles.pct}>%</span>
+          <span className="ml-[.5em] text-[clamp(14px,1.4vw,20px)] leading-none">%</span>
         </div>
       </div>
     </div>

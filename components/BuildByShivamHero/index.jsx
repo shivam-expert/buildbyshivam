@@ -1,10 +1,19 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import styles from "./BuildByShivamHero.module.css";
+import m from "./BuildByShivamHero.module.css"; // keyframe animations only
 import { createSilkRenderer } from "./silkRenderer";
 import { findStrokeCentre } from "./findStrokeCentre";
 import { clamp, easeInOutCubic as ease, easeOutCubic, lerp, range } from "./math";
+
+const cx = (...c) => c.filter(Boolean).join(" ");
+const CHROME =
+  "pointer-events-none absolute inset-x-0 flex items-center justify-between gap-4 p-[clamp(16px,2.4vw,28px)] font-mono text-xs tracking-[.02em] text-[#ede6da]";
+// Final-section copy fades up once the hero gets data-live (set from the scroll loop).
+const REVEAL =
+  "translate-y-6 opacity-0 [transition:opacity_.6s_cubic-bezier(.2,.7,.2,1),translate_.8s_cubic-bezier(.2,.7,.2,1)] group-data-live:translate-y-0 group-data-live:opacity-100 motion-reduce:transition-none";
+const BTN =
+  "inline-block rounded-full px-6 py-3.5 text-[15px] font-medium tracking-[.01em] transition-[translate,background-color,box-shadow] duration-200 ease-in-out hover:-translate-y-0.5 focus-visible:outline-3 focus-visible:outline-offset-3 focus-visible:outline-solid focus-visible:outline-[#bfa782] motion-reduce:transition-none";
 
 const WORD = "PORTFOLIO";
 const DIVE_GLYPH = "P";
@@ -212,7 +221,7 @@ export default function BuildByShivamHero({
     function setLive(next) {
       if (next === live) return;
       live = next;
-      hero.classList.toggle(styles.live, live);
+      hero.toggleAttribute("data-live", live);
       if (live) {
         scramble();
       } else {
@@ -377,52 +386,82 @@ export default function BuildByShivamHero({
   }, []);
 
   return (
-    <div className={styles.scroller} ref={scrollerRef}>
-      <div className={styles.stage} ref={stageRef}>
-        <canvas className={styles.art} ref={artRef} aria-hidden="true" />
-        <div className={styles.scrim} ref={scrimRef} />
-        <canvas className={styles.mask} ref={maskRef} role="img" aria-label="PORTFOLIO" />
+    <div
+      ref={scrollerRef}
+      className="relative h-[420vh] w-full bg-[#050506] font-sans text-[#f3eee6] antialiased [--mask-bg:#0a0a0b]"
+    >
+      <div ref={stageRef} className="sticky top-0 h-svh overflow-hidden">
+        <canvas ref={artRef} aria-hidden="true" className="absolute inset-0 block size-full origin-center" />
+        <div
+          ref={scrimRef}
+          className="pointer-events-none absolute inset-0 size-full bg-[linear-gradient(180deg,rgba(5,5,6,0)_40%,rgba(5,5,6,.72)_100%)] opacity-0"
+        />
+        <canvas ref={maskRef} role="img" aria-label="PORTFOLIO" className="absolute inset-0 block size-full" />
 
-        <div className={`${styles.chrome} ${styles.top}`} ref={topRef}>
-          <span className={styles.wordmark}>
-            buildbyshivam<span className={styles.caret} aria-hidden="true" />
+        <div ref={topRef} className={cx(CHROME, "top-0")}>
+          <span className="text-sm font-semibold">
+            buildbyshivam
+            <span aria-hidden="true" className={cx(m.caret, "ml-0.5 inline-block h-[1.05em] w-[.6em] bg-current align-[-0.18em]")} />
           </span>
-          <span className={styles.status}>
-            <i aria-hidden="true" />
+          <span className="hidden items-center gap-2 min-[701px]:inline-flex">
+            <i aria-hidden="true" className="size-[7px] rounded-full bg-[#ede6da] shadow-[0_0_0_3px_rgba(237,230,218,.15)]" />
             available for new projects
           </span>
         </div>
-        <div className={`${styles.chrome} ${styles.bottom}`} ref={bottomRef} aria-hidden="true">
-          <span className={styles.hint}>
+        <div ref={bottomRef} aria-hidden="true" className={cx(CHROME, "bottom-0")}>
+          <span className="flex items-center gap-2">
             {"// scroll to compile"}
-            <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="1.6">
+            <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="1.6" className={cx(m.nudge, "size-3")}>
               <path d="M2 4l4 4 4-4" />
             </svg>
           </span>
-          <span className={styles.ver}>v4.0 — react · next · shopify · gsap</span>
+          <span className="hidden min-[701px]:inline">v4.0 — react · next · shopify · gsap</span>
         </div>
 
-        <section className={styles.hero} ref={heroRef} aria-label="About buildbyshivam">
-          <div className={`${styles.kicker} ${styles.r}`} style={{ "--d": "0ms" }} aria-hidden="true">
+        <section
+          ref={heroRef}
+          aria-label="About buildbyshivam"
+          className="group pointer-events-none absolute inset-0 flex size-full flex-col justify-end p-[clamp(20px,4vw,56px)] pb-24 md:pb-[clamp(28px,6vw,72px)] data-live:pointer-events-auto"
+        >
+          <div aria-hidden="true" className={cx(REVEAL, "mb-3.5 font-mono text-[13px] text-[#bfa782]")}>
             &gt; npm run build --portfolio
           </div>
-          <h1 className={`${styles.title} ${styles.r}`} style={{ "--d": "60ms" }} aria-label={TITLE_LEAD + TITLE_ACCENT}>
+          <h1
+            aria-label={TITLE_LEAD + TITLE_ACCENT}
+            className={cx(
+              REVEAL,
+              "group-data-live:delay-[60ms] m-0 text-[clamp(38px,9vw,150px)] font-black leading-[.9] tracking-[-0.035em] [font-stretch:125%] [overflow-wrap:anywhere] [text-shadow:0_2px_40px_rgba(0,0,0,.35)]",
+            )}
+          >
             <span ref={titleLeadRef} aria-hidden="true">
               {TITLE_LEAD}
             </span>
-            <span ref={titleAccentRef} className={styles.accent} aria-hidden="true">
+            <span ref={titleAccentRef} aria-hidden="true" className="font-light italic tracking-[-0.02em] text-[#d9bf94]">
               {TITLE_ACCENT}
             </span>
           </h1>
-          <p className={`${styles.lead} ${styles.r}`} style={{ "--d": "160ms" }}>
+          <p
+            className={cx(
+              REVEAL,
+              "group-data-live:delay-[160ms] mt-[clamp(14px,1.6vw,22px)] max-w-[46ch] text-[clamp(15px,1.2vw,18px)] leading-[1.55] text-[rgba(243,238,230,.66)]",
+            )}
+          >
             Frontend developer shipping fast, animated websites in React, Next.js, Shopify and GSAP. Clean code in,
             memorable sites out.
           </p>
-          <div className={`${styles.actions} ${styles.r}`} style={{ "--d": "260ms" }}>
-            <a className={`${styles.btn} ${styles.primary}`} href={primaryHref} target="_blank" rel="noopener noreferrer">
+          <div className={cx(REVEAL, "group-data-live:delay-[260ms] mt-[clamp(20px,2.2vw,30px)] flex flex-wrap gap-2.5")}>
+            <a
+              className={cx(BTN, "bg-[#f3eee6] text-[#0a0a0b] hover:bg-[#d9bf94]")}
+              href={primaryHref}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
               Start a project →
             </a>
-            <a className={`${styles.btn} ${styles.ghost}`} href={secondaryHref}>
+            <a
+              className={cx(BTN, "text-[#f3eee6] shadow-[inset_0_0_0_1.5px_rgba(243,238,230,.35)] backdrop-blur-[6px] hover:bg-[rgba(243,238,230,.07)]")}
+              href={secondaryHref}
+            >
               See my work
             </a>
           </div>

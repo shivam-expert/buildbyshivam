@@ -1,0 +1,141 @@
+/* Scroll-driven motion only. Layout, colour and type live in Tailwind classes in index.jsx.
+   index.jsx writes these variables onto each [data-sec] section every frame:
+   --p progress through the section (0 → 1)
+   --e entrance  --x exit  --t text reveal
+   story only: --k card expand, --s shoe lands, --w word, --wo word out, --to text out,
+               --z foam zoom, --mt/--mo material text in/out, --c charm zoom, --ct charm tag */
+
+.vars {
+  --p: 0; --e: 0; --x: 0; --t: 0; --k: 0; --s: 0; --w: 0; --wo: 0;
+  --to: 0; --z: 0; --mt: 0; --mo: 0; --c: 0; --ct: 0;
+}
+
+/* ---------- classic story ---------- */
+.stage {
+  clip-path: inset(calc((1 - var(--k)) * (50% - 140px)) calc((1 - var(--k)) * (50% - 200px)) round calc((1 - var(--k)) * 26px + 0.1px));
+}
+.introMark { opacity: calc(1 - var(--k) * 4); }
+.storyHint { opacity: calc(1 - var(--k) * 6); }
+.hintLine { transform-origin: top; animation: line 1.8s ease-in-out infinite; }
+@keyframes line {
+  0% { transform: scaleY(0); }
+  50% { transform: scaleY(1); transform-origin: top; }
+  50.1% { transform-origin: bottom; }
+  100% { transform: scaleY(0); transform-origin: bottom; }
+}
+.storyWord {
+  transform: translateY(calc((1 - var(--w)) * 80% + var(--wo) * 35%));
+  opacity: calc(var(--w) * 1.6 - var(--wo) * 1.4);
+  will-change: transform;
+}
+.storyShoe {
+  transform:
+    translate(-50%, -50%)
+    translate(calc(var(--z) * 10% - var(--c) * 10%), calc((1 - var(--s)) * -8% + var(--z) * -6% + var(--c) * 6%))
+    rotate(calc((1 - var(--s)) * 8deg - var(--s) * 4deg + var(--z) * 4deg))
+    scale(calc(0.4 + var(--s) * 0.6 + var(--z) * 1.5));
+  will-change: transform;
+}
+.shoeZoom { filter: drop-shadow(0 calc(30px + var(--s) * 20px) calc(30px + var(--s) * 20px) rgba(80, 20, 0, .35)); }
+.shoeCharm {
+  transform-origin: 23.9% 41.3%;
+  transform: translate(calc(var(--c) * 26.1%), calc(var(--c) * 8.7%)) scale(calc(1 + var(--c) * var(--c) * 4.5));
+  will-change: transform;
+}
+.shoeBlur { filter: blur(calc(var(--c) * var(--c) * 3px)); }
+.charm { transform: translate(-50%, -50%); opacity: calc(var(--c) * 4 - 0.2); }
+.charmRing {
+  transform: translate(-50%, -50%);
+  background: radial-gradient(circle, #c43f0b 52%, #ff7b3f 66%, #e2551a 82%, rgba(226, 85, 26, 0) 100%);
+  opacity: calc(var(--c) * 4 - 0.4);
+}
+.storyMeta {
+  opacity: calc(var(--t) - var(--to) * 1.5);
+  transform: translateY(calc((1 - var(--t)) * 50px - var(--to) * 40px));
+}
+.storyCount { opacity: calc(var(--t) - var(--to) * 1.5); }
+.matTxt {
+  opacity: calc(var(--mt) - var(--mo) * 1.5);
+  transform: translateY(calc((1 - var(--mt)) * 80px - var(--mo) * 60px));
+}
+.matChips {
+  opacity: calc(var(--mt) - var(--mo) * 1.5);
+  transform: translateY(calc((1 - var(--mt)) * 40px));
+}
+.charmTag { opacity: var(--ct); transform: translateX(calc((1 - var(--ct)) * 40px)); }
+
+/* ---------- colourway scenes ---------- */
+.word {
+  transform: translateY(calc((1 - var(--e)) * 75% - var(--x) * 45%)) scale(calc(1.1 - var(--e) * 0.1));
+  opacity: calc(var(--e) * 1.5 - var(--x) * 1.2);
+  will-change: transform;
+}
+.flyR {
+  transform:
+    translate(calc((1 - var(--e)) * 100% - var(--x) * 100%), calc((1 - var(--e)) * 55% - var(--x) * 45%))
+    rotate(calc((1 - var(--e)) * 40deg - var(--x) * 38deg + (var(--p) - 0.5) * -16deg))
+    scale(calc(0.45 + var(--e) * 0.55 - var(--x) * 0.25));
+  will-change: transform;
+}
+.flyL {
+  transform:
+    translate(calc((var(--e) - 1) * 100% + var(--x) * 100%), calc((1 - var(--e)) * 55% - var(--x) * 45%))
+    rotate(calc((var(--e) - 1) * 40deg + var(--x) * 38deg + (var(--p) - 0.5) * 16deg))
+    scale(calc(0.45 + var(--e) * 0.55 - var(--x) * 0.25));
+  will-change: transform;
+}
+.bob { animation: bob 4.5s ease-in-out infinite; }
+@keyframes bob {
+  0%, 100% { transform: translateY(0) rotate(0); }
+  50% { transform: translateY(-12px) rotate(-1.5deg); }
+}
+.rise {
+  opacity: calc(var(--t) - var(--x) * 1.4);
+  transform: translateY(calc((1 - var(--t)) * 60px - var(--x) * 40px));
+}
+.barFill { transform-origin: left; transform: scaleX(var(--p)); }
+
+/* decorations, scroll-parallaxed */
+.bubble {
+  background: radial-gradient(circle at 32% 28%, #fff 0 8%, #ffb3d6 22%, #e0458f 70%, #b8236c);
+  box-shadow: inset -8px -10px 24px rgba(120, 0, 60, .35);
+  transform: translateY(calc((0.5 - var(--p)) * var(--k) * 1px)) scale(calc(0.4 + var(--e) * 0.6));
+}
+.clouds { transform: translateX(calc((0.5 - var(--p)) * 40%)); }
+.clouds2 { transform: translateX(calc((var(--p) - 0.5) * 70%)); }
+.rings { transform: scale(calc(0.5 + var(--e) * 0.5 + var(--x) * 0.6)) rotate(calc(var(--p) * 60deg)); }
+.ring {
+  box-shadow: 0 0 24px rgba(120, 160, 255, .8), inset 0 0 24px rgba(120, 160, 255, .5);
+  animation: spin 14s linear infinite;
+}
+@keyframes spin {
+  from { transform: translate(-50%, -50%) rotateX(68deg) rotateZ(0); }
+  to { transform: translate(-50%, -50%) rotateX(68deg) rotateZ(360deg); }
+}
+.beam {
+  background: linear-gradient(transparent, rgba(190, 210, 255, .9), transparent);
+  box-shadow: 0 0 18px #8fb0ff;
+}
+
+/* six colours wheel */
+.wheel {
+  transform: rotate(calc(var(--p) * 320deg - 160deg)) scale(calc(0.3 + var(--e) * 0.7 + var(--x) * 0.35));
+  will-change: transform;
+}
+
+/* after dark sweep */
+.sweep {
+  left: calc(-30% + var(--p) * 160%);
+  transform: skewX(-18deg);
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0), rgba(255, 248, 230, .4), rgba(255, 255, 255, 0));
+}
+
+/* lookbook track */
+.track { transform: translateX(calc(45% - var(--p) * 115%)); will-change: transform; }
+
+/* footer wordmark */
+.footLetter { transform: translateY(calc(clamp(0, 1 - var(--p) * 2.6 + var(--i) * 0.14, 1) * 100%)); }
+
+@media (prefers-reduced-motion: reduce) {
+  .bob, .ring, .hintLine { animation: none; }
+}

@@ -11,6 +11,14 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-archivo);
   --font-mono: var(--font-jetbrains-mono);
+  /* page fonts: next/font sets each variable on that page's root element */
+  --font-squish: var(--font-clog-disp), "Rubik", system-ui, sans-serif;
+  --font-squish-body: var(--font-clog-body), "Inter", system-ui, sans-serif;
+  --font-bag-display: var(--font-bag-serif), Georgia, serif;
+  --font-bag-body: var(--font-bag-mono), ui-monospace, monospace;
+  --font-kaito: var(--font-kaito-sans), "Inter Tight", system-ui, sans-serif;
+  --font-kaito-serif: var(--font-kaito-serif-src), "EB Garamond", serif;
+  --font-kaito-jp: var(--font-kaito-jp-src), "Noto Serif JP", serif;
 }
 
 body {

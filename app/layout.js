@@ -1,4 +1,5 @@
 import { Archivo, JetBrains_Mono } from "next/font/google";
+import SiteMenu from "@/components/SiteMenu";
 import "./globals.css";
 
 const archivo = Archivo({
@@ -28,6 +29,7 @@ export default function RootLayout({ children }) {
     >
       <body className="min-h-full flex flex-col">
         {children}
+        <SiteMenu />
       </body>
     </html>
   );
