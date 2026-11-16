@@ -1,5 +1,4 @@
 import { Archivo, JetBrains_Mono } from "next/font/google";
-import BuildByShivamHero from "@/components/BuildByShivamHero";
 import "./globals.css";
 
 const archivo = Archivo({
@@ -28,7 +27,6 @@ export default function RootLayout({ children }) {
       className={`${archivo.variable} ${jetbrainsMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
-        <BuildByShivamHero />
         {children}
       </body>
     </html>
