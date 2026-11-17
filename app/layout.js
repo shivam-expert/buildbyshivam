@@ -27,6 +27,22 @@ export default function RootLayout({ children }) {
       lang="en"
       className={`${archivo.variable} ${jetbrainsMono.variable} h-full antialiased`}
     >
+
+      <head>
+
+        <script async src="https://www.googletagmanager.com/gtm.js?id=GTM-59LX8583"></script>
+        <script>
+
+          {`
+       window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+      `}
+
+        </script>
+      </head>
+
+
       <body className="min-h-full flex flex-col">
         {children}
         <SiteMenu />
