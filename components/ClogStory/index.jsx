@@ -36,6 +36,7 @@ const LINK_UNDERLINE =
 function progress(kind, rc, vh) {
   if (kind === "story") return clamp(-rc.top / Math.max(1, rc.height - vh));
   if (kind === "foot") return clamp((vh - rc.top) / Math.max(1, rc.height));
+  if (kind === "chain") return clamp((-rc.top + 0.6 * vh) / Math.max(1, rc.height - 0.4 * vh));
   return clamp((-rc.top + 0.45 * vh) / Math.max(1, rc.height - 0.1 * vh));
 }
 
@@ -64,6 +65,28 @@ function varsFor(kind, p) {
     x: in2(range(p, 0.66, 0.94)),
     t: out3(range(p, 0.28, 0.48)),
   };
+}
+
+/** Pinned colourway chain: per-layer vars from the section's overall progress u. */
+function layerVars(u, i, n) {
+  const q = u * (n - 0.3) - i; // last layer stops just as its exit begins
+  return {
+    p: clamp(q),
+    e: out3(range(q, 0.05, 0.38)),
+    t: out3(range(q, 0.22, 0.45)),
+    x: in2(range(q, 0.66, 0.94)),
+    r: i === 0 ? 1 : smooth(range(q, -0.32, 0.02)), // circular wipe over the previous scene
+  };
+}
+
+function setVars(el, last, vars) {
+  for (const name in vars) {
+    const v = Math.round(vars[name] * 10000) / 10000;
+    if (last[name] !== v) {
+      last[name] = v;
+      el.style.setProperty(`--${name}`, v);
+    }
+  }
 }
 
 function SearchIcon() {
@@ -135,6 +158,7 @@ export default function ClogStory({ className = "" }) {
       kind: el.dataset.sec,
       cur: 0,
       last: {},
+      layers: [...el.querySelectorAll("[data-layer]")].map((l) => ({ el: l, last: {}, shown: true })),
     }));
 
     const tick = () => {
@@ -144,13 +168,19 @@ export default function ClogStory({ className = "" }) {
         const target = progress(it.kind, rc, vh);
         it.cur += (target - it.cur) * k;
         if (Math.abs(target - it.cur) < 0.0005) it.cur = target;
-        const vars = varsFor(it.kind, it.cur);
-        for (const name in vars) {
-          const v = Math.round(vars[name] * 10000) / 10000;
-          if (it.last[name] !== v) {
-            it.last[name] = v;
-            it.el.style.setProperty(`--${name}`, v);
-          }
+        if (it.kind === "chain") {
+          const n = it.layers.length;
+          it.layers.forEach((L, i) => {
+            const vars = layerVars(it.cur, i, n);
+            setVars(L.el, L.last, vars);
+            const shown = vars.r > 0;
+            if (shown !== L.shown) {
+              L.shown = shown;
+              L.el.style.visibility = shown ? "" : "hidden";
+            }
+          });
+        } else {
+          setVars(it.el, it.last, varsFor(it.kind, it.cur));
         }
       }
       raf = requestAnimationFrame(tick);
@@ -258,62 +288,69 @@ export default function ClogStory({ className = "" }) {
         </div>
       </section>
 
-      {/* COLORWAY SCENES */}
-      {SCENES.map((s) => (
-        <section key={s.id} data-sec="scene" id={s.id} className={SEC} style={{ background: s.base }}>
-          <div className={PIN} style={{ background: s.bg }}>
-            {s.deco === "bubbles" &&
-              BUBBLES.map((b, i) => (
-                <div
-                  key={i}
-                  className={cx(m.bubble, "absolute z-[2] rounded-full")}
-                  style={{ "--k": b.k, width: b.s, height: b.s, left: b.left, top: b.top }}
-                />
-              ))}
-            {s.deco === "clouds" && (
-              <>
-                <div className={cx(m.clouds, "absolute inset-0 z-[2]")}>
-                  <Cloud w={520} h={150} left="-6%" top="14%" />
-                  <Cloud w={380} h={120} left="62%" top="8%" />
-                  <Cloud w={300} h={100} left="4%" top="58%" />
-                </div>
-                <div className={cx(m.clouds2, "pointer-events-none absolute inset-0 z-[4] opacity-70")}>
-                  <Cloud w={700} h={180} left="20%" top="74%" />
-                </div>
-              </>
-            )}
-            {s.deco === "rings" && (
-              <>
-                <div className={cx(m.rings, "absolute inset-0 z-[2]")}>
-                  <div className={cx(m.ring, "absolute left-1/2 top-1/2 size-[900px] rounded-full border-2 border-[rgba(160,190,255,.75)]")} />
-                  <div
-                    className={cx(m.ring, "absolute left-1/2 top-1/2 size-[620px] rounded-full border-2 border-[rgba(160,190,255,.75)]")}
-                    style={{ animationDuration: "9s", animationDirection: "reverse" }}
-                  />
-                </div>
-                <div className={cx(m.beam, "absolute -inset-y-[10%] left-[30%] z-[2] w-0.5")} />
-                <div className={cx(m.beam, "absolute -inset-y-[10%] left-[64%] z-[2] w-0.5 rotate-[14deg]")} />
-              </>
-            )}
-            <h2
-              className={cx(m.word, WORD, DISP, s.align === "left" && "pl-12 text-left")}
-              style={{ color: s.wordColor, fontSize: s.fs }}
+      {/* COLORWAY SCENES — one pinned stage; each colourway wipes in over the last */}
+      <section data-sec="chain" id={SCENES[0].id} className="relative h-[7600px]" style={{ background: SCENES[SCENES.length - 1].base }}>
+        <div className="sticky top-0 isolate h-svh min-h-[560px] overflow-hidden">
+          {SCENES.map((s, i) => (
+            <div
+              key={s.id}
+              data-layer
+              className={cx(m.vars, i > 0 && m.reveal, "absolute inset-0 grid place-items-center overflow-hidden")}
+              style={{ background: s.bg, zIndex: i + 1 }}
             >
-              {s.word}
-            </h2>
-            <div className={cx(CLOG, m[s.fly])}>
-              <div className={m.bob}>
-                <img className={SHOE} src={s.img} alt={s.alt} />
+                {s.deco === "bubbles" &&
+                  BUBBLES.map((b, i) => (
+                    <div
+                      key={i}
+                      className={cx(m.bubble, "absolute z-[2] rounded-full")}
+                      style={{ "--k": b.k, width: b.s, height: b.s, left: b.left, top: b.top }}
+                    />
+                  ))}
+                {s.deco === "clouds" && (
+                  <>
+                    <div className={cx(m.clouds, "absolute inset-0 z-[2]")}>
+                      <Cloud w={520} h={150} left="-6%" top="14%" />
+                      <Cloud w={380} h={120} left="62%" top="8%" />
+                      <Cloud w={300} h={100} left="4%" top="58%" />
+                    </div>
+                    <div className={cx(m.clouds2, "pointer-events-none absolute inset-0 z-[4] opacity-70")}>
+                      <Cloud w={700} h={180} left="20%" top="74%" />
+                    </div>
+                  </>
+                )}
+                {s.deco === "rings" && (
+                  <>
+                    <div className={cx(m.rings, "absolute inset-0 z-[2]")}>
+                      <div className={cx(m.ring, "absolute left-1/2 top-1/2 size-[900px] rounded-full border-2 border-[rgba(160,190,255,.75)]")} />
+                      <div
+                        className={cx(m.ring, "absolute left-1/2 top-1/2 size-[620px] rounded-full border-2 border-[rgba(160,190,255,.75)]")}
+                        style={{ animationDuration: "9s", animationDirection: "reverse" }}
+                      />
+                    </div>
+                    <div className={cx(m.beam, "absolute -inset-y-[10%] left-[30%] z-[2] w-0.5")} />
+                    <div className={cx(m.beam, "absolute -inset-y-[10%] left-[64%] z-[2] w-0.5 rotate-[14deg]")} />
+                  </>
+                )}
+                <h2
+                  className={cx(m.word, WORD, DISP, s.align === "left" && "pl-12 text-left")}
+                  style={{ color: s.wordColor, fontSize: s.fs }}
+                >
+                  {s.word}
+                </h2>
+                <div className={cx(CLOG, m[s.fly])}>
+                  <div className={m.bob}>
+                    <img className={SHOE} src={s.img} alt={s.alt} />
+                  </div>
+                </div>
+                <Meta className={cx(META, m.rise)} tag={s.tag} desc={s.desc} ink={s.ink} btn={s.btn} />
+                <div className={cx(COUNT, m.rise)} style={{ color: s.ink }}>{s.num} / 05</div>
+                <div className="absolute right-12 top-[146px] z-[4] hidden h-0.5 w-[90px] overflow-hidden bg-black/15 md:block" style={{ color: s.ink }}>
+                  <i className={cx(m.barFill, "block h-full bg-current")} />
+                </div>
               </div>
-            </div>
-            <Meta className={cx(META, m.rise)} tag={s.tag} desc={s.desc} ink={s.ink} btn={s.btn} />
-            <div className={cx(COUNT, m.rise)} style={{ color: s.ink }}>{s.num} / 05</div>
-            <div className="absolute right-12 top-[146px] z-[4] hidden h-0.5 w-[90px] overflow-hidden bg-black/15 md:block" style={{ color: s.ink }}>
-              <i className={cx(m.barFill, "block h-full bg-current")} />
-            </div>
-          </div>
-        </section>
-      ))}
+          ))}
+        </div>
+      </section>
 
       {/* SIX COLORS */}
       <section data-sec="scene" id="colors" className={cx(SEC, "bg-[#dff1f6]")}>

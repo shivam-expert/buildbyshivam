@@ -1,13 +1,13 @@
 /* Scroll-driven motion only. Layout, colour and type live in Tailwind classes in index.jsx.
    index.jsx writes these variables onto each [data-sec] section every frame:
    --p progress through the section (0 → 1)
-   --e entrance  --x exit  --t text reveal
+   --e entrance  --x exit  --t text reveal  --r chain layer reveal (colourway layers get vars per layer)
    story only: --k card expand, --s shoe lands, --w word, --wo word out, --to text out,
                --z foam zoom, --mt/--mo material text in/out, --c charm zoom, --ct charm tag */
 
 .vars {
   --p: 0; --e: 0; --x: 0; --t: 0; --k: 0; --s: 0; --w: 0; --wo: 0;
-  --to: 0; --z: 0; --mt: 0; --mo: 0; --c: 0; --ct: 0;
+  --to: 0; --z: 0; --mt: 0; --mo: 0; --c: 0; --ct: 0; --r: 1;
 }
 
 /* ---------- classic story ---------- */
@@ -65,6 +65,11 @@
 .charmTag { opacity: var(--ct); transform: translateX(calc((1 - var(--ct)) * 40px)); }
 
 /* ---------- colourway scenes ---------- */
+/* pinned chain: each layer after the first grows out of the bottom edge as a circle */
+.reveal {
+  clip-path: circle(calc(var(--r) * 150%) at 50% 110%);
+}
+
 .word {
   transform: translateY(calc((1 - var(--e)) * 75% - var(--x) * 45%)) scale(calc(1.1 - var(--e) * 0.1));
   opacity: calc(var(--e) * 1.5 - var(--x) * 1.2);
