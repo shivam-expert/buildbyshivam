@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import m from "./ClogStory.module.css"; // scroll-driven motion only
 import { ACCENT, BUBBLES, IMG, NAV, SCENES, SIZES, SPOKES, SWATCHES, TILES } from "./data";
 
-const SMOOTH = 0.14; // scroll easing per frame (1 = no easing)
+const SMOOTH = 9; // scroll easing rate per second (higher = snappier); frame-rate independent
 const LETTERS = "squish".split("");
 
 const clamp = (v) => (v < 0 ? 0 : v > 1 ? 1 : v);
@@ -17,6 +17,8 @@ const cx = (...c) => c.filter(Boolean).join(" ");
 /* Shared Tailwind recipes */
 const DISP = "font-squish font-black tracking-[-0.065em] leading-[0.8]";
 const SHOE = "block h-auto w-full select-none [-webkit-user-drag:none]";
+// shadow lives on the <img> (static content) so it is rasterised once, not recomputed every frame
+const SHADOW = "drop-shadow-[0_40px_40px_rgba(0,0,0,.25)]";
 const SPRING = "transition-transform duration-[250ms] ease-[cubic-bezier(.3,1.6,.5,1)]";
 const PILL = `inline-flex min-h-11 items-center rounded-full border-[1.5px] border-current px-5 text-[13px] font-semibold hover:-translate-y-0.5 hover:scale-[1.03] ${SPRING}`;
 const PILL_STYLE = {
@@ -25,7 +27,7 @@ const PILL_STYLE = {
 };
 const SEC = `${m.vars} relative h-[2100px]`;
 const PIN = "sticky top-0 isolate grid h-svh min-h-[560px] place-items-center overflow-hidden";
-const CLOG = "relative z-[3] mt-[4%] w-[84vw] drop-shadow-[0_40px_40px_rgba(0,0,0,.25)] md:w-[min(700px,58vw)]";
+const CLOG = "relative z-[3] mt-[4%] w-[84vw] md:w-[min(700px,58vw)]";
 const META = "absolute left-5 top-24 z-[4] max-w-[240px] md:left-12 md:top-[120px] md:max-w-[300px]";
 const COUNT = "absolute right-12 top-[120px] z-[4] hidden font-squish text-[13px] font-bold tracking-[.08em] md:block";
 const WORD = "absolute inset-x-0 -bottom-[0.04em] z-[1] whitespace-pre-line text-center";
@@ -151,8 +153,8 @@ export default function ClogStory({ className = "" }) {
 
   useEffect(() => {
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const k = reduce ? 1 : SMOOTH;
     let raf = 0;
+    let prev = performance.now();
     const sections = [...rootRef.current.querySelectorAll("[data-sec]")].map((el) => ({
       el,
       kind: el.dataset.sec,
@@ -161,7 +163,10 @@ export default function ClogStory({ className = "" }) {
       layers: [...el.querySelectorAll("[data-layer]")].map((l) => ({ el: l, last: {}, shown: true })),
     }));
 
-    const tick = () => {
+    const tick = (now) => {
+      const dt = Math.min(0.1, (now - prev) / 1000);
+      prev = now;
+      const k = reduce ? 1 : 1 - Math.exp(-SMOOTH * dt);
       const vh = window.innerHeight || 800;
       for (const it of sections) {
         const rc = it.el.getBoundingClientRect();
@@ -170,10 +175,12 @@ export default function ClogStory({ className = "" }) {
         if (Math.abs(target - it.cur) < 0.0005) it.cur = target;
         if (it.kind === "chain") {
           const n = it.layers.length;
+          const all = it.layers.map((_, i) => layerVars(it.cur, i, n));
           it.layers.forEach((L, i) => {
-            const vars = layerVars(it.cur, i, n);
+            const vars = all[i];
             setVars(L.el, L.last, vars);
-            const shown = vars.r > 0;
+            // skip rendering layers not yet revealed, or fully covered by the next one
+            const shown = vars.r > 0 && !(all[i + 1] && all[i + 1].r >= 1);
             if (shown !== L.shown) {
               L.shown = shown;
               L.el.style.visibility = shown ? "" : "hidden";
@@ -236,9 +243,9 @@ export default function ClogStory({ className = "" }) {
             classic
           </h2>
           <div className={cx(m.storyShoe, "absolute left-1/2 top-[54%] z-[3] w-[92vw] md:w-[min(700px,60vw)]")}>
-            <div className={m.shoeZoom}>
+            <div>
               <div className={cx(m.shoeCharm, "relative")}>
-                <img className={cx(SHOE, m.shoeBlur)} src={IMG.orange} alt="Classic foam clog in orange" />
+                <img className={cx(SHOE, "drop-shadow-[0_45px_45px_rgba(80,20,0,.35)]")} src={IMG.orange} alt="Classic foam clog in orange" />
                 <div className={cx(m.charmRing, "absolute left-[23.9%] top-[41.3%] aspect-square w-[9.6%] rounded-full")} />
                 <div className={cx(m.charm, "absolute left-[23.9%] top-[41.3%] aspect-square w-[6.4%]")}>
                   <Charm />
@@ -339,7 +346,7 @@ export default function ClogStory({ className = "" }) {
                 </h2>
                 <div className={cx(CLOG, m[s.fly])}>
                   <div className={m.bob}>
-                    <img className={SHOE} src={s.img} alt={s.alt} />
+                    <img className={cx(SHOE, SHADOW)} src={s.img} alt={s.alt} />
                   </div>
                 </div>
                 <Meta className={cx(META, m.rise)} tag={s.tag} desc={s.desc} ink={s.ink} btn={s.btn} />
@@ -376,9 +383,9 @@ export default function ClogStory({ className = "" }) {
       <section data-sec="scene" id="night" className={cx(SEC, "bg-[#cbb48c]")}>
         <div className={cx(PIN, "bg-[radial-gradient(70%_70%_at_50%_45%,#f3ead6,#cbb48c_55%,#3a2a1a)]")}>
           <h2 className={cx(m.word, WORD, DISP, "text-[clamp(110px,17vw,280px)] text-[#1b120b]")}>after dark</h2>
-          <div className={cx(CLOG, m.flyR)} style={{ filter: "drop-shadow(0 50px 50px rgba(30,15,0,.5))" }}>
+          <div className={cx(CLOG, m.flyR)}>
             <div className={m.bob}>
-              <img className={SHOE} src={IMG.black} alt="Black gloss foam clog" />
+              <img className={cx(SHOE, "drop-shadow-[0_50px_50px_rgba(30,15,0,.5)]")} src={IMG.black} alt="Black gloss foam clog" />
             </div>
           </div>
           <div className="pointer-events-none absolute inset-0 z-[4] overflow-hidden">

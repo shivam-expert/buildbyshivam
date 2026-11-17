@@ -36,13 +36,11 @@
     scale(calc(0.4 + var(--s) * 0.6 + var(--z) * 1.5));
   will-change: transform;
 }
-.shoeZoom { filter: drop-shadow(0 calc(30px + var(--s) * 20px) calc(30px + var(--s) * 20px) rgba(80, 20, 0, .35)); }
 .shoeCharm {
   transform-origin: 23.9% 41.3%;
   transform: translate(calc(var(--c) * 26.1%), calc(var(--c) * 8.7%)) scale(calc(1 + var(--c) * var(--c) * 4.5));
   will-change: transform;
 }
-.shoeBlur { filter: blur(calc(var(--c) * var(--c) * 3px)); }
 .charm { transform: translate(-50%, -50%); opacity: calc(var(--c) * 4 - 0.2); }
 .charmRing {
   transform: translate(-50%, -50%);
@@ -71,6 +69,7 @@
 }
 
 .word {
+  backface-visibility: hidden;
   transform: translateY(calc((1 - var(--e)) * 75% - var(--x) * 45%)) scale(calc(1.1 - var(--e) * 0.1));
   opacity: calc(var(--e) * 1.5 - var(--x) * 1.2);
   will-change: transform;
@@ -89,12 +88,13 @@
     scale(calc(0.45 + var(--e) * 0.55 - var(--x) * 0.25));
   will-change: transform;
 }
-.bob { animation: bob 4.5s ease-in-out infinite; }
+.bob { animation: bob 4.5s ease-in-out infinite; will-change: transform; }
 @keyframes bob {
   0%, 100% { transform: translateY(0) rotate(0); }
   50% { transform: translateY(-12px) rotate(-1.5deg); }
 }
 .rise {
+  will-change: transform, opacity;
   opacity: calc(var(--t) - var(--x) * 1.4);
   transform: translateY(calc((1 - var(--t)) * 60px - var(--x) * 40px));
 }
@@ -130,8 +130,10 @@
 
 /* after dark sweep */
 .sweep {
-  left: calc(-30% + var(--p) * 160%);
-  transform: skewX(-18deg);
+  /* was left: -30% → 130% of the stage; as a transform (% of its own 22% width) it stays on the compositor */
+  left: 0;
+  transform: translateX(calc(-136.4% + var(--p) * 727.3%)) skewX(-18deg);
+  will-change: transform;
   background: linear-gradient(90deg, rgba(255, 255, 255, 0), rgba(255, 248, 230, .4), rgba(255, 255, 255, 0));
 }
 
