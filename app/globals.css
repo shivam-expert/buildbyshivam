@@ -19,6 +19,8 @@
   --font-kaito: var(--font-kaito-sans), "Inter Tight", system-ui, sans-serif;
   --font-kaito-serif: var(--font-kaito-serif-src), "EB Garamond", serif;
   --font-kaito-jp: var(--font-kaito-jp-src), "Noto Serif JP", serif;
+  --font-stone: var(--font-stone-sans), "Inter Tight", system-ui, sans-serif;
+  --font-stone-serif: var(--font-stone-serif-src), "Instrument Serif", Georgia, serif;
 }
 
 body {

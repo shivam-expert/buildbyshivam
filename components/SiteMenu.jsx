@@ -10,6 +10,8 @@ const PAGES = [
   { href: "/bag-swap", label: "Bag Swap", note: "Tap a bag, watch it swap" },
   { href: "/clog", label: "Clog Story", note: "Scroll-driven product story" },
   { href: "/film-archive", label: "Film Archive", note: "3D shelf of VHS tapes" },
+  { href: "/stone-scent", label: "Stone Scent", note: "3D stone breaks into a perfume" },
+  { href: "/selected-cases", label: "Selected Cases", note: "Curved ring gallery of the work" },
 ];
 
 export default function SiteMenu() {

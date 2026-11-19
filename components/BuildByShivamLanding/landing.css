@@ -14,6 +14,7 @@
 @keyframes bbs-pop{0%{transform:scale(0) rotate(-20deg);opacity:0}70%{transform:scale(1.08)}100%{transform:scale(1) rotate(0);opacity:1}}
 @keyframes bbs-glint{0%,70%,100%{opacity:0}80%{opacity:1}}
 @keyframes bbs-haloPulse{0%,100%{opacity:.55}50%{opacity:.2}}
+@keyframes bbs-breathe{0%,100%{opacity:1;scale:1}50%{opacity:.82;scale:1.05}}
 @keyframes bbs-grow{to{transform:scaleX(1)}}
 @keyframes bbs-stageIn{from{transform:scale(.84) translateY(80px);border-radius:120px;filter:brightness(.6)}to{transform:scale(1) translateY(0);border-radius:40px;filter:none}}
 @keyframes bbs-stageOut{to{transform:scale(.92);opacity:.35}}
@@ -101,6 +102,21 @@
   .chip-l{background:#fff;color:#000;border:2px solid #000}
   .badge{position:absolute;width:132px;height:132px;right:-2%;bottom:6%}
   .badge-core{position:absolute;inset:34px;border-radius:50%;background:#000;display:grid;place-items:center;color:var(--lime)}
+
+  /* hero: headline · photo in the centre · intro */
+  .hero-trio{grid-template-columns:minmax(0,1fr) clamp(260px,26vw,360px) minmax(0,.82fr);gap:clamp(16px,2.4vw,40px);align-items:end}
+  .hero-trio .hero-l{position:relative;z-index:2;align-self:center}
+  .hero-trio .hero-r{position:relative;z-index:2;align-self:center;padding-top:clamp(0px,14vh,140px);padding-left:clamp(0px,1.6vw,24px)}
+  .hero-trio h1{font-size:clamp(36px,3.9vw,60px)}
+  .hero-trio .hero-r p{font-size:17px;margin:0 0 28px;max-width:22em}
+  .photo-stage{aspect-ratio:auto;height:clamp(500px,76vh,700px);max-width:none;z-index:1}
+  /* studio backlight: hot white core, lime falloff */
+  .photo-light{position:absolute;left:50%;top:40%;width:190%;aspect-ratio:1;translate:-50% -50%;border-radius:50%;pointer-events:none;
+    background:radial-gradient(closest-side,#fff 0%,rgba(255,255,255,.92) 22%,color-mix(in srgb,var(--lime) 70%,#fff) 46%,color-mix(in srgb,var(--lime) 35%,transparent) 66%,transparent 100%);filter:blur(6px)}
+  .photo-stage .char-ring{inset:auto;left:50%;top:40%;width:128%;aspect-ratio:1;translate:-50% -50%}
+  .photo-floor{position:absolute;left:50%;bottom:-1%;width:78%;height:7%;translate:-50% 0;border-radius:50%;background:radial-gradient(closest-side,rgba(0,0,0,.38),transparent);filter:blur(4px)}
+  .photo-cut{position:absolute;left:50%;bottom:0;height:100%;width:auto;max-width:none;translate:-50% 0;filter:drop-shadow(0 18px 30px rgba(0,0,0,.18));user-select:none;-webkit-user-drag:none}
+  .photo-stage .badge{right:auto;left:-30%;bottom:4%}
 
   /* marquee */
   .marquee{overflow:hidden;background:#000;color:#fff;transform:rotate(-2deg);margin:40px -20px 0;padding:18px 0;border-top:3px solid var(--lime);border-bottom:3px solid var(--lime)}
@@ -205,6 +221,7 @@
   &:not(.calm) .chip{animation:bbs-pop .8s cubic-bezier(.3,1.4,.5,1) both,bbs-floaty 5s ease-in-out infinite;animation-delay:var(--d),calc(var(--d) + .8s)}
   &:not(.calm) .glint{animation:bbs-glint 4.2s infinite}
   &:not(.calm) .halo-glow{animation:bbs-haloPulse 3.2s ease-in-out infinite}
+  &:not(.calm) .photo-light{animation:bbs-breathe 5.5s ease-in-out infinite}
   }
 
   /* ---------- scroll-driven motion ---------- */
@@ -447,6 +464,8 @@
   &:not(.calm) .head{translate:calc(var(--mx,0) * 9px) calc(var(--my,0) * 5px)}
   &:not(.calm) .char-stage .char{rotate:calc(var(--skew,0deg) * -0.5)}
   &:not(.calm) .char-disc{translate:calc(var(--mx,0) * -16px) calc(var(--my,0) * -12px)}
+  &:not(.calm) .photo-light{translate:calc(-50% + var(--mx,0) * -18px) calc(-50% + var(--my,0) * -14px)}
+  &:not(.calm) .photo-cut{translate:calc(-50% + var(--mx,0) * 6px) 0}
   &:not(.calm) .chip{translate:calc(var(--mx,0) * -28px) calc(var(--my,0) * -20px)}
   &:not(.calm) .chip-l{translate:calc(var(--mx,0) * 32px) calc(var(--my,0) * 22px)}
   &:not(.calm) .badge{translate:calc(var(--mx,0) * 22px) calc(var(--my,0) * -18px)}
@@ -460,6 +479,17 @@
   .nav-links{display:none}
   .hero-inner,.inter,.contact{grid-template-columns:minmax(0,1fr)}
   .char-stage{max-width:380px}
+  .hero-trio{gap:28px}
+  .hero-trio .hero-r{padding-top:0}
+  .photo-stage{width:min(300px,70vw);height:clamp(420px,62vh,540px)}
+  .photo-stage .badge{left:auto;right:-14%;bottom:6%;width:104px;height:104px}
+  .photo-stage .chip{left:auto !important;right:auto !important;top:auto !important;bottom:auto !important}
+  .photo-stage .chip:nth-of-type(1){left:-14% !important;top:16% !important}
+  .photo-stage .chip:nth-of-type(2){right:-12% !important;top:6% !important}
+  .photo-stage .chip:nth-of-type(3){left:-12% !important;top:56% !important}
+  .photo-stage .chip:nth-of-type(4){right:-14% !important;top:34% !important}
+  .photo-stage .badge-ring{width:104px;height:104px}
+  .photo-stage .badge-core{inset:26px}
   .step{grid-template-columns:minmax(0,1fr)}
   .pills{height:auto;display:flex;flex-wrap:wrap;gap:12px;justify-content:center}
   .pill{position:relative;left:auto !important;top:auto !important}

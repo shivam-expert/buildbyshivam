@@ -290,66 +290,32 @@ export default function BuildByShivamLanding({ className = "" }) {
         <div className="boot-grid" aria-hidden="true"></div>
         <div className="blob" style={{ width: "520px", height: "420px", right: "-120px", top: "40px" }}></div>
         <div className="blob" style={{ width: "380px", height: "320px", left: "-160px", bottom: "0px", opacity: ".35" }}></div>
-        <div className="hero-inner">
-          <div style={{ position: "relative", zIndex: "2" }}>
+        <div className="hero-inner hero-trio">
+          <div className="hero-l">
             <h1 className="disp bt" data-code="&lt;h1.hero-title&gt;">
               <span className="line"><span style={{ "--d": "1.4s" }}>Frontends</span></span>
               <span className="line"><span style={{ "--d": "1.7s" }}>that <span className="hl">move</span></span></span>
               <span className="line"><span style={{ "--d": "2s" }}>people <span className="hl hl-lime">to act.</span></span></span>
             </h1>
-            <p className="bt" data-code="&lt;p.intro&gt;">I’m Shivam, a freelance frontend developer with 4+ years of building fast, animated websites in React, Next.js and Shopify for healthcare, fintech and events brands.</p>
-            <div className="bt" data-code="&lt;div.cta-row&gt;" style={{ display: "flex", gap: "14px", flexWrap: "wrap" }}>
-              <a href="#contact" className="btn"><span className="dot"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2z"></path></svg></span>Book a call</a>
-              <a href="#work" className="btn" style={{ borderColor: "transparent" }}><span className="dot"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M12 5v14M6 13l6 6 6-6"></path></svg></span>See the work</a>
-            </div>
           </div>
 
-          <div className="char-stage bt bt-px" data-code="&lt;svg#shivam&gt;">
+          <div className="char-stage photo-stage bt bt-px" data-code="&lt;img#shivam&gt;">
             <div className="char-par" style={{ position: "absolute", inset: "0" }}>
-              <div className="char-disc"></div>
+              <div className="photo-light" aria-hidden="true"></div>
               <div className="char-ring spin-scroll"></div>
-              <svg className="char" viewBox="0 0 400 420" role="img" aria-label="Illustrated Shivam waving, with a glowing ring light around his shoulders">
-                <defs><filter id="glowA" x="-20%" y="-200%" width="140%" height="500%"><feGaussianBlur stdDeviation="8"></feGaussianBlur></filter></defs>
-                <g className="halo">
-                  <path className="halo-glow" d="M32 318 A168 40 0 0 1 368 318" stroke="var(--lime)" strokeWidth="30" strokeLinecap="round" fill="none" opacity=".55" filter="url(#glowA)"></path>
-                  <path d="M32 318 A168 40 0 0 1 368 318" stroke="#fff" strokeWidth="13" strokeLinecap="round" fill="none"></path>
-                </g>
-                <path d="M60 430 C60 344 116 300 200 298 C284 300 340 344 340 430 Z" fill="#000"></path>
-                <path d="M160 300 C176 318 224 318 240 300" stroke="#2c2c2c" strokeWidth="5" fill="none"></path>
-                <g className="head">
-                  <circle cx="116" cy="188" r="16" fill="#B98262" stroke="#000" strokeWidth="3"></circle>
-                  <circle cx="284" cy="188" r="16" fill="#B98262" stroke="#000" strokeWidth="3"></circle>
-                  <rect x="118" y="96" width="164" height="182" rx="80" fill="#B98262" stroke="#000" strokeWidth="3"></rect>
-                  <path d="M120 152 C110 98 150 62 202 62 C254 60 292 94 284 152 C276 128 262 112 240 106 C222 98 194 100 174 108 C152 114 134 126 120 152 Z" fill="#000"></path>
-                  <path d="M226 70 C248 54 276 66 280 90" stroke="#000" strokeWidth="10" strokeLinecap="round" fill="none"></path>
-                  <path d="M150 74 C162 60 182 56 196 60" stroke="#2a2a2a" strokeWidth="4" strokeLinecap="round" fill="none"></path>
-                  <path d="M144 160 C156 149 174 149 186 156" stroke="#000" strokeWidth="8" strokeLinecap="round" fill="none"></path>
-                  <path d="M214 156 C226 149 244 149 256 160" stroke="#000" strokeWidth="8" strokeLinecap="round" fill="none"></path>
-                  <g className="eyes">
-                    <ellipse cx="166" cy="178" rx="7" ry="7" fill="#000"></ellipse>
-                    <ellipse cx="234" cy="178" rx="7" ry="7" fill="#000"></ellipse>
-                    <circle cx="169" cy="175" r="2.2" fill="#fff"></circle>
-                    <circle cx="237" cy="175" r="2.2" fill="#fff"></circle>
-                  </g>
-                  <path d="M200 180 C196 196 192 206 199 210 C204 213 210 211 213 207" stroke="#6E4127" strokeWidth="4" strokeLinecap="round" fill="none"></path>
-                  <path d="M120 188 C120 248 150 294 200 296 C250 294 280 248 280 188 C273 214 262 228 248 233 C236 220 222 214 200 214 C178 214 164 220 152 233 C138 228 127 214 120 188 Z" fill="#000"></path>
-                  <path d="M182 240 C194 248 208 248 220 238" stroke="#D69A7C" strokeWidth="4.5" strokeLinecap="round" fill="none"></path>
-                </g>
-                <g className="halo">
-                  <path className="halo-glow" d="M32 318 A168 40 0 0 0 368 318" stroke="var(--lime)" strokeWidth="30" strokeLinecap="round" fill="none" opacity=".55" filter="url(#glowA)"></path>
-                  <path d="M32 318 A168 40 0 0 0 368 318" stroke="#fff" strokeWidth="13" strokeLinecap="round" fill="none"></path>
-                </g>
-                <g className="arm">
-                  <path d="M298 352 C314 334 324 314 330 294" stroke="#000" strokeWidth="40" strokeLinecap="round" fill="none"></path>
-                  <path d="M330 292 C336 276 340 262 341 250" stroke="#B98262" strokeWidth="26" strokeLinecap="round" fill="none"></path>
-                  <circle cx="341" cy="234" r="21" fill="#B98262" stroke="#000" strokeWidth="3"></circle>
-                  <path d="M330 216 L326 198 M342 212 L342 192 M354 216 L358 199" stroke="#000" strokeWidth="4" strokeLinecap="round"></path>
-                </g>
-              </svg>
-              <span className="chip bt" data-code="&lt;chip:react.js&gt;" style={{ left: "-4%", top: "18%", "--d": "3.4s" }}><i></i>React.js</span>
-              <span className="chip chip-l bt" data-code="&lt;chip:next.js&gt;" style={{ right: "2%", top: "4%", "--d": "3.6s" }}><i style={{ background: "#000" }}></i>Next.js</span>
-              <span className="chip bt" data-code="&lt;chip:gsap&gt;" style={{ left: "2%", bottom: "26%", "--d": "3.8s" }}><i></i>GSAP</span>
-              <span className="chip chip-l bt" data-code="&lt;chip:shopify&gt;" style={{ right: "-6%", top: "46%", "--d": "4s" }}><i style={{ background: "#000" }}></i>Shopify</span>
+              <div className="photo-floor" aria-hidden="true"></div>
+              <img
+                className="photo-cut"
+                src="/home/shivam-cutout.png"
+                width="315"
+                height="840"
+                fetchPriority="high"
+                alt="Shivam standing in a grey suit and burgundy tie, lit from behind by a soft studio light"
+              />
+              <span className="chip bt" data-code="&lt;chip:react.js&gt;" style={{ left: "-20%", top: "12%", "--d": "3.4s" }}><i></i>React.js</span>
+              <span className="chip chip-l bt" data-code="&lt;chip:next.js&gt;" style={{ right: "-16%", top: "6%", "--d": "3.6s" }}><i style={{ background: "#000" }}></i>Next.js</span>
+              <span className="chip bt" data-code="&lt;chip:gsap&gt;" style={{ left: "-22%", bottom: "38%", "--d": "3.8s" }}><i></i>GSAP</span>
+              <span className="chip chip-l bt" data-code="&lt;chip:shopify&gt;" style={{ right: "-22%", top: "26%", "--d": "4s" }}><i style={{ background: "#000" }}></i>Shopify</span>
               <div className="badge bt" data-code="&lt;badge.status&gt;">
                 <svg className="badge-ring" viewBox="0 0 132 132" width="132" height="132" aria-hidden="true">
                   <defs><path id="circ" d="M66 66 m-52 0 a52 52 0 1 1 104 0 a52 52 0 1 1 -104 0"></path></defs>
@@ -358,6 +324,14 @@ export default function BuildByShivamLanding({ className = "" }) {
                 </svg>
                 <div className="badge-core"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M7 17L17 7M9 7h8v8"></path></svg></div>
               </div>
+            </div>
+          </div>
+
+          <div className="hero-r">
+            <p className="bt" data-code="&lt;p.intro&gt;">I’m Shivam, a freelance frontend developer with 4+ years of building fast, animated websites in React, Next.js and Shopify for healthcare, fintech and events brands.</p>
+            <div className="bt" data-code="&lt;div.cta-row&gt;" style={{ display: "flex", gap: "14px", flexWrap: "wrap" }}>
+              <a href="#contact" className="btn"><span className="dot"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2z"></path></svg></span>Book a call</a>
+              <a href="#work" className="btn" style={{ borderColor: "transparent" }}><span className="dot"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M12 5v14M6 13l6 6 6-6"></path></svg></span>See the work</a>
             </div>
           </div>
         </div>
