@@ -12,6 +12,7 @@ const PAGES = [
   { href: "/film-archive", label: "Film Archive", note: "3D shelf of VHS tapes" },
   { href: "/stone-scent", label: "Stone Scent", note: "3D stone breaks into a perfume" },
   { href: "/selected-cases", label: "Selected Cases", note: "Curved ring gallery of the work" },
+  { href: "/kalpa", label: "Kalpa", note: "Coconut cracks open into a can" },
 ];
 
 export default function SiteMenu() {

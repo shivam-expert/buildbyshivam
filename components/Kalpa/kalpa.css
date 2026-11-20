@@ -1,0 +1,154 @@
+/* Kalpa — every rule is scoped under .kalpa so nothing leaks into other routes.
+   Fonts come from next/font variables set on the same root element (see app/kalpa/page.js). */
+
+.kalpa {
+  --sand: #F2EFEA; --ink: #2A1A12; --muted: #4A3328; --palm: #2F5D3A; --lime: #E3E85A; --dark: #3A2C23;
+  --disp: var(--font-kalpa-disp), "Big Shoulders Display", "Arial Narrow", Impact, sans-serif;
+  --body: var(--font-kalpa-body), Inter, system-ui, sans-serif;
+  --hand: var(--font-kalpa-hand), Caveat, "Comic Sans MS", cursive;
+  width: 100%;
+  background: var(--sand);
+  color: var(--ink);
+  font-family: var(--body);
+  -webkit-font-smoothing: antialiased;
+  overflow-x: clip;
+  color-scheme: light;
+}
+.kalpa *, .kalpa *::before, .kalpa *::after { box-sizing: border-box; }
+.kalpa a { color: inherit; }
+.kalpa button { font: inherit; }
+.kalpa img { display: block; max-width: 100%; }
+/* Big Shoulders is one variable family now; opsz 72 is the "Display" cut */
+.kalpa .disp, .kalpa .btn, .kalpa .logo span, .kalpa .loader b, .kalpa .statement h2, .kalpa .ex-head h2,
+.kalpa .card h3, .kalpa .foot, .kalpa .scrollhint, .kalpa .counter { font-variation-settings: "opsz" 72; }
+
+/* loader */
+.kalpa .loader { position: fixed; inset: 0; z-index: 100; background: var(--sand); display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 18px; transition: opacity .8s, visibility .8s; }
+.kalpa .loader.done { opacity: 0; visibility: hidden; }
+.kalpa .loader b { font-family: var(--disp); font-weight: 900; font-size: 64px; letter-spacing: 6px; }
+.kalpa .loader i { width: 140px; height: 2px; background: rgba(42,26,18,.15); position: relative; overflow: hidden; }
+.kalpa .loader i::after { content: ""; position: absolute; inset: 0; background: var(--ink); animation: kp-ld 1.1s infinite ease-in-out; transform-origin: left; }
+@keyframes kp-ld { 0% { transform: scaleX(0) } 60% { transform: scaleX(1); transform-origin: left } 61% { transform-origin: right } 100% { transform: scaleX(0); transform-origin: right } }
+
+/* nav */
+.kalpa .nav { position: fixed; inset: 0 0 auto 0; z-index: 60; display: flex; align-items: center; justify-content: space-between; padding: clamp(14px,2vw,28px) clamp(18px,3.6vw,52px); pointer-events: none; }
+.kalpa .nav > * { pointer-events: auto; }
+.kalpa .logo { display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--ink); transition: color .4s; }
+.kalpa .logo span { font-family: var(--disp); font-weight: 900; font-size: clamp(22px,2vw,28px); letter-spacing: 2px; }
+.kalpa .nav-r { display: flex; gap: 8px; }
+.kalpa .btn { height: 46px; min-width: 46px; padding: 0 24px; border: 0; border-radius: 10px; background: var(--ink); color: var(--sand); font-family: var(--disp); font-weight: 800; font-size: 19px; letter-spacing: 2px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: transform .25s, background .4s, color .4s; }
+.kalpa .btn:hover { transform: translateY(-2px); }
+.kalpa .btn.icon { padding: 0; }
+.kalpa.on-dark .logo { color: var(--sand); }
+.kalpa.on-dark .nav .btn { background: var(--lime); color: var(--ink); }
+
+/* ---------- pinned story ---------- */
+.kalpa .story { position: relative; height: 1050vh; }
+.kalpa .stage { position: sticky; top: 0; height: 100vh; overflow: hidden; background: var(--sand); }
+.kalpa .layer { position: absolute; inset: 0; }
+.kalpa .gl { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 2; display: block; }
+.kalpa .behind { z-index: 1; display: flex; align-items: center; justify-content: center; pointer-events: none; }
+.kalpa .front { z-index: 3; pointer-events: none; }
+.kalpa .front a, .kalpa .front button { pointer-events: auto; }
+.kalpa .frond { position: absolute; right: -3vw; top: -4vh; width: min(36vw,520px); filter: blur(3px); opacity: .75; }
+
+.kalpa .sm { --s: 0; --d: 1; filter: blur(calc(var(--s) * 7px)); text-shadow: calc(var(--s) * var(--d) * -26px) 0 0 rgba(42,26,18,.22), calc(var(--s) * var(--d) * -54px) 0 0 rgba(42,26,18,.12), calc(var(--s) * var(--d) * -86px) 0 0 rgba(42,26,18,.06); will-change: transform, filter; }
+.kalpa .disp { font-family: var(--disp); font-weight: 900; line-height: .88; letter-spacing: -.5px; margin: 0; }
+
+.kalpa .hero-h { position: absolute; left: clamp(18px,3.6vw,52px); top: 15vh; font-size: clamp(58px,8.6vw,132px); }
+.kalpa .hero-h .ln { display: block; }
+.kalpa .hero-notes { position: absolute; left: 32vw; top: 63vh; display: flex; flex-direction: column; align-items: flex-start; gap: 6px; }
+.kalpa .hero-notes ul { margin: 0; padding-left: 20px; font-family: var(--hand); font-size: clamp(20px,1.7vw,26px); line-height: 1.25; list-style: disc; }
+.kalpa .hero-copy { position: absolute; right: clamp(18px,3.6vw,52px); top: 62vh; width: min(330px,80vw); display: flex; flex-direction: column; gap: 20px; align-items: flex-start; }
+.kalpa .copy { font-size: clamp(14px,1.15vw,17px); line-height: 1.55; color: var(--muted); margin: 0; }
+.kalpa .cta { display: inline-flex; align-items: center; justify-content: center; height: 52px; padding: 0 30px; border: 2px solid var(--ink); border-radius: 50%/50%; font-family: var(--hand); font-weight: 700; font-size: 25px; text-decoration: none; transform: rotate(-3deg); transition: background .25s, color .25s; }
+.kalpa .cta:hover { background: var(--ink); color: var(--sand); }
+.kalpa .scrollhint { position: absolute; left: 50%; bottom: 26px; transform: translateX(-50%); font-family: var(--disp); font-weight: 700; letter-spacing: 3px; font-size: 14px; color: #6A5246; display: flex; flex-direction: column; align-items: center; gap: 8px; }
+.kalpa .scrollhint i { width: 1px; height: 34px; background: linear-gradient(var(--ink), transparent); animation: kp-drip 1.6s infinite; }
+@keyframes kp-drip { 0% { transform: scaleY(0); transform-origin: top } 50% { transform: scaleY(1); transform-origin: top } 51% { transform-origin: bottom } 100% { transform: scaleY(0); transform-origin: bottom } }
+
+.kalpa .s2 { position: absolute; font-size: clamp(56px,8.8vw,136px); opacity: 0; }
+.kalpa .s2-l { left: clamp(18px,3.6vw,52px); top: 40vh; }
+.kalpa .s2-r { right: clamp(18px,3.6vw,52px); top: 40vh; --d: -1; }
+.kalpa .s2-r2 { right: 22vw; top: calc(40vh + clamp(50px,7.8vw,120px)); --d: -1; }
+.kalpa .s2-copy { position: absolute; left: clamp(18px,3.6vw,52px); top: calc(40vh + clamp(70px,9.4vw,150px)); width: min(300px,80vw); opacity: 0; }
+
+.kalpa .c-title { position: absolute; left: clamp(18px,3.6vw,52px); top: 14vh; font-size: clamp(58px,7.4vw,112px); opacity: 0; }
+.kalpa .c-copy { position: absolute; left: clamp(18px,3.6vw,52px); top: calc(14vh + clamp(64px,7.6vw,116px)); width: min(300px,80vw); opacity: 0; }
+.kalpa .c-right { position: absolute; right: clamp(18px,3.6vw,52px); bottom: 12vh; width: min(300px,80vw); display: flex; flex-direction: column; gap: 16px; align-items: flex-end; text-align: right; opacity: 0; }
+
+.kalpa .keep { font-size: clamp(70px,13vw,210px); display: flex; white-space: nowrap; }
+.kalpa .keep .ch { display: inline-block; opacity: 0; }
+.kalpa .keep .sp { width: .25em; }
+
+.kalpa .counter { position: absolute; left: clamp(18px,3.6vw,52px); right: clamp(18px,3.6vw,52px); bottom: 26px; display: flex; align-items: center; gap: 18px; font-family: var(--disp); font-weight: 800; font-size: 15px; letter-spacing: 2px; opacity: 0; }
+.kalpa .counter .lbl { min-width: 120px; }
+.kalpa .counter .bar { width: min(220px,30vw); height: 3px; background: rgba(42,26,18,.14); position: relative; overflow: hidden; border-radius: 2px; }
+.kalpa .counter .bar i { position: absolute; inset: 0; background: var(--ink); transform-origin: left; transform: scaleX(0); }
+
+.kalpa .arches { position: absolute; left: 0; right: 0; top: 0; z-index: 5; pointer-events: none; will-change: transform; transform: translateY(110vh); }
+.kalpa .arches .row { display: flex; justify-content: center; margin: 0 -8vw; }
+.kalpa .arches .row span { flex: 0 0 17vw; height: 17vw; border-radius: 50%; background: var(--dark); margin: 0 .6vw; }
+.kalpa .arches .fill { height: 100vh; background: var(--dark); margin-top: -8.5vw; }
+
+/* ---------- dark statement ---------- */
+.kalpa .dark { background: var(--dark); color: var(--sand); position: relative; overflow: hidden; }
+.kalpa .statement { min-height: 110vh; display: flex; align-items: center; justify-content: center; padding: 18vh clamp(18px,4vw,56px); position: relative; }
+.kalpa .statement h2 { font-family: var(--disp); font-weight: 900; font-size: clamp(46px,7vw,112px); line-height: .92; text-align: center; margin: 0; max-width: 1200px; }
+.kalpa .statement h2 .ln { display: block; }
+.kalpa .pill { display: inline-block; background: var(--lime); color: var(--ink); border-radius: .18em; padding: 0 .14em; min-width: 3.1em; text-align: center; transform: rotate(-2deg); position: relative; overflow: hidden; vertical-align: baseline; }
+.kalpa .pill b { display: inline-block; font-weight: 900; }
+.kalpa .sketch { position: absolute; stroke: #E9E2D5; fill: none; stroke-width: 1.6; opacity: .45; stroke-linejoin: round; stroke-linecap: round; }
+.kalpa .smiley { position: absolute; left: 6vw; top: 14vh; width: clamp(64px,7vw,96px); }
+.kalpa .burst { width: clamp(60px,6vw,90px); animation: kp-spin 14s linear infinite; }
+@keyframes kp-spin { to { transform: rotate(360deg) } }
+.kalpa .handnote { position: absolute; right: 8vw; bottom: 16vh; font-family: var(--hand); font-size: clamp(20px,1.8vw,26px); color: var(--sand); transform: rotate(-6deg); text-align: right; line-height: 1.1; margin: 0; }
+
+.kalpa .explore { padding: 6vh clamp(18px,4vw,56px) 14vh; }
+.kalpa .ex-head { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 6vh; }
+.kalpa .ex-head h2 { font-family: var(--disp); font-weight: 900; font-size: clamp(46px,8.4vw,128px); margin: 0; line-height: .9; }
+.kalpa .ex-head .burst { flex-shrink: 0; }
+.kalpa .cards { display: grid; grid-template-columns: repeat(auto-fit,minmax(260px,1fr)); gap: 18px; }
+.kalpa .card { border-radius: 6px; padding: 22px; min-height: min(66vh,560px); display: flex; flex-direction: column; color: var(--ink); text-decoration: none; position: relative; overflow: hidden; }
+.kalpa .card .imgw { flex: 1; display: flex; align-items: center; justify-content: center; min-height: 0; padding: 10px 0 18px; }
+.kalpa .card img { height: min(44vh,360px); width: auto; max-width: 90%; object-fit: contain; transition: transform .6s cubic-bezier(.2,.8,.2,1); filter: drop-shadow(0 30px 30px rgba(42,26,18,.25)); }
+.kalpa .card:hover img { transform: rotate(-10deg) translateY(-10px) scale(1.04); }
+.kalpa .card .meta { display: flex; justify-content: space-between; align-items: flex-end; border-top: 1.5px solid rgba(42,26,18,.25); padding-top: 14px; }
+.kalpa .card h3 { margin: 0; font-family: var(--disp); font-weight: 900; font-size: clamp(30px,2.8vw,42px); line-height: .95; }
+.kalpa .card p { margin: 4px 0 0; font-size: 14px; color: var(--muted); }
+.kalpa .card .arrow { width: 46px; height: 46px; border-radius: 50%; border: 1.5px solid var(--ink); display: flex; align-items: center; justify-content: center; transition: background .25s, color .25s; }
+.kalpa .card:hover .arrow { background: var(--ink); color: var(--sand); }
+
+/* ---------- deserve ---------- */
+.kalpa .deserve { position: relative; background: var(--sand); overflow: hidden; padding-bottom: 10vh; }
+.kalpa .scallops { display: flex; justify-content: center; margin: 0 -8vw; transform: translateY(-8.5vw); }
+.kalpa .scallops span { flex: 0 0 17vw; height: 17vw; border-radius: 50%; background: var(--dark); margin: 0 .6vw; }
+.kalpa .dz { min-height: 100vh; position: relative; margin-top: -6vw; }
+.kalpa .dz h2 { position: absolute; left: clamp(18px,4vw,56px); top: 6vh; font-size: clamp(50px,7.4vw,116px); }
+.kalpa .dz h2 .ln { display: block; }
+.kalpa .dz .copy { position: absolute; left: clamp(18px,4vw,56px); bottom: 16vh; width: min(320px,80vw); }
+.kalpa .polas { position: absolute; right: 4vw; bottom: 8vh; width: min(62vw,820px); height: min(70vh,600px); }
+.kalpa .pola { position: absolute; margin: 0; background: #fff; padding: 12px 12px 46px; box-shadow: 0 30px 60px -20px rgba(42,26,18,.35); width: min(25vw,300px); }
+.kalpa .pola .ph { aspect-ratio: 4/5; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+.kalpa .pola .ph img { width: 86%; }
+.kalpa .pola figcaption { position: absolute; left: 14px; bottom: 10px; font-family: var(--hand); font-size: 22px; }
+/* extra bottom padding keeps the row clear of the floating site menu button */
+.kalpa .foot { background: var(--ink); color: var(--sand); padding: 10vh clamp(18px,4vw,56px) calc(4vh + 64px); display: flex; flex-direction: column; gap: 6vh; }
+.kalpa .foot .big { font-family: var(--disp); font-weight: 900; font-size: clamp(90px,24vw,380px); line-height: .8; letter-spacing: 4px; margin: 0; }
+.kalpa .foot .row { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px; font-family: var(--disp); font-weight: 700; letter-spacing: 3px; color: #C9B8AC; }
+
+@media (max-width: 760px) {
+  .kalpa .hero-h { top: 12vh; }
+  .kalpa .hero-notes { left: auto; right: 18px; top: auto; bottom: 24vh; align-items: flex-end; }
+  .kalpa .hero-notes svg { display: none; }
+  .kalpa .hero-copy { left: 18px; right: 18px; width: auto; top: auto; bottom: 70px; }
+  .kalpa .hero-copy .cta { display: none; }
+  .kalpa .s2-l, .kalpa .s2-r { top: 22vh; }
+  .kalpa .s2-r2 { right: 18px; top: calc(22vh + 52px); }
+  .kalpa .s2-copy { top: auto; bottom: 90px; }
+  .kalpa .c-right { display: none; }
+  .kalpa .polas { position: relative; right: auto; bottom: auto; width: 100%; height: 520px; margin-top: 40vh; }
+  .kalpa .pola { width: 46vw; }
+  .kalpa .dz .copy { bottom: auto; top: 28vh; }
+  .kalpa .smiley { left: 4vw; top: 6vh; }
+}
