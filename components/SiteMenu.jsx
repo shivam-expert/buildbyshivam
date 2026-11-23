@@ -13,6 +13,7 @@ const PAGES = [
   { href: "/stone-scent", label: "Stone Scent", note: "3D stone breaks into a perfume" },
   { href: "/selected-cases", label: "Selected Cases", note: "Curved ring gallery of the work" },
   { href: "/kalpa", label: "Kalpa", note: "Coconut cracks open into a can" },
+  { href: "/north", label: "NORTH°", note: "3D smartwatch assembles on scroll" },
 ];
 
 export default function SiteMenu() {
