@@ -14,6 +14,7 @@ const PAGES = [
   { href: "/selected-cases", label: "Selected Cases", note: "Curved ring gallery of the work" },
   { href: "/kalpa", label: "Kalpa", note: "Coconut cracks open into a can" },
   { href: "/north", label: "NORTH°", note: "3D smartwatch assembles on scroll" },
+  { href: "/keithston", label: "Keithston", note: "Animated bakery landing page" },
 ];
 
 export default function SiteMenu() {
@@ -66,9 +67,9 @@ export default function SiteMenu() {
         aria-label="Site menu"
         inert={!open}
         onClick={(e) => e.target === e.currentTarget && setOpen(false)}
-        className={`fixed inset-0 z-[1000] flex items-center justify-center bg-neutral-950/92 px-4 backdrop-blur-xl transition-opacity duration-500 ${open ? "opacity-100" : "pointer-events-none opacity-0"}`}
+        className={`fixed inset-0 z-[1000] flex justify-center overflow-y-auto overscroll-contain bg-neutral-950/92 px-4 backdrop-blur-xl transition-opacity duration-500 ${open ? "opacity-100" : "pointer-events-none opacity-0"}`}
       >
-        <nav className="w-full max-w-3xl">
+        <nav className="my-auto w-full max-w-3xl pb-28 pt-12">
           <p className="mb-6 font-mono text-xs uppercase tracking-[0.25em] text-neutral-500">
             buildbyshivam — pages
           </p>
@@ -89,7 +90,7 @@ export default function SiteMenu() {
                     className="group flex items-baseline justify-between gap-6 py-5 text-neutral-100 outline-none focus-visible:text-white"
                   >
                     <span className="flex items-baseline gap-4">
-                      <span className="font-mono text-xs text-neutral-500">0{i + 1}</span>
+                      <span className="font-mono text-xs text-neutral-500">{String(i + 1).padStart(2, "0")}</span>
                       <span className="text-4xl font-semibold tracking-tight transition-transform duration-300 group-hover:translate-x-2 group-focus-visible:translate-x-2 sm:text-6xl">
                         {p.label}
                       </span>
